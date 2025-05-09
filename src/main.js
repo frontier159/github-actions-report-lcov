@@ -105,7 +105,7 @@ async function genhtml(coverageFiles, tmpPath) {
   const workingDirectory = core.getInput('working-directory').trim() || './';
   const artifactName = core.getInput('artifact-name').trim();
   const artifactPath = path.resolve(tmpPath, 'html').trim();
-  const args = [...coverageFiles, '--rc', 'lcov_branch_coverage=1'];
+  const args = [...coverageFiles, '--rc', 'lcov_branch_coverage=1', '--rc', 'derive_function_end_line=0'];
 
   args.push('--output-directory');
   args.push(artifactPath);
@@ -144,7 +144,7 @@ async function mergeCoverages(coverageFiles, tmpPath) {
   args.push('--output-file');
   args.push(mergedCoverageFile);
 
-  await exec.exec('lcov', [...args, '--rc', 'lcov_branch_coverage=1']);
+  await exec.exec('lcov', [...args, '--rc', 'lcov_branch_coverage=1', '--rc', 'derive_function_end_line=0']);
 
   return mergedCoverageFile;
 }
@@ -166,7 +166,9 @@ async function summarize(coverageFile) {
     '--summary',
     coverageFile,
     '--rc',
-    'lcov_branch_coverage=1'
+    'lcov_branch_coverage=1',
+    '--rc',
+    'derive_function_end_line=0'
   ], options);
 
   const lines = output
@@ -197,6 +199,8 @@ async function detail(coverageFile, octokit) {
     '--list-full-path',
     '--rc',
     'lcov_branch_coverage=1',
+    '--rc',
+    'derive_function_end_line=0',
   ], options);
 
   let lines = output
